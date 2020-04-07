@@ -40,6 +40,14 @@ class SignatureCapture extends React.Component {
                 dragged: event.nativeEvent.dragged
             });
         }
+        if(event.nativeEvent.reset){
+
+            if (!this.props.onResetEvent) {
+                return;
+            }
+            this.props.onResetEvent({
+            });
+        }
     }
 
     componentDidMount() {
