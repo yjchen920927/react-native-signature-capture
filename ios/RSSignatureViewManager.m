@@ -51,7 +51,12 @@ RCT_EXPORT_METHOD(resetImage:(nonnull NSNumber *)reactTag) {
 					@"encoded": aEncoded
 					}];
 }
-
+-(void) publishResetImageEvent{
+    [self.bridge.eventDispatcher
+     sendDeviceEventWithName:@"onResetEvent"
+     body:@{@"reset": @YES
+                    }];
+}
 -(void) publishDraggedEvent {
 	[self.bridge.eventDispatcher
 	 sendDeviceEventWithName:@"onDragEvent"
