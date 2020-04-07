@@ -31,15 +31,6 @@ class SignatureCapture extends React.Component {
                 encoded: event.nativeEvent.encoded,
             });
         }
-
-        if(event.nativeEvent.dragged){
-            if (!this.props.onDragEvent) {
-                return;
-            }
-            this.props.onDragEvent({
-                dragged: event.nativeEvent.dragged
-            });
-        }
         if(event.nativeEvent.reset){
 
             if (!this.props.onResetEvent) {
@@ -48,6 +39,15 @@ class SignatureCapture extends React.Component {
             this.props.onResetEvent({
             });
         }
+        if(event.nativeEvent.dragged){
+            if (!this.props.onDragEvent) {
+                return;
+            }
+            this.props.onDragEvent({
+                dragged: event.nativeEvent.dragged
+            });
+        }
+        
     }
 
     componentDidMount() {
@@ -63,6 +63,13 @@ class SignatureCapture extends React.Component {
             let sub = DeviceEventEmitter.addListener(
                 'onDragEvent',
                 this.props.onDragEvent
+            );
+            this.subscriptions.push(sub);
+        }
+        if (this.props.onResetEvent) {
+            let sub = DeviceEventEmitter.addListener(
+                'onResetEvent',
+                this.props.onResetEvent
             );
             this.subscriptions.push(sub);
         }
