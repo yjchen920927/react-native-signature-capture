@@ -127,28 +127,30 @@
 			if (_showNativeButtons) {
 				//Save button
 				saveButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-				[saveButton setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(90))];
+//				[saveButton setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(270))];
 				[saveButton setLineBreakMode:NSLineBreakByClipping];
 				[saveButton addTarget:self action:@selector(onSaveButtonPressed)
 				            forControlEvents:UIControlEventTouchUpInside];
-				[saveButton setTitle:@"Save" forState:UIControlStateNormal];
-
-				CGSize buttonSize = CGSizeMake(55, 80.0); //Width/Height is swapped
+				[saveButton setTitle:@"确认" forState:UIControlStateNormal];
+                [saveButton setTitleColor:[UIColor colorWithRed:255/255.f green:255/255.f blue:255/255.f alpha:1.f]forState:UIControlStateNormal];
+                
+				CGSize buttonSize = CGSizeMake(88, 40.0); //Width/Height is swapped
 
 				saveButton.frame = CGRectMake(sign.bounds.size.width - buttonSize.width, sign.bounds.size.height - buttonSize.height, buttonSize.width, buttonSize.height);
-				[saveButton setBackgroundColor:[UIColor colorWithRed:250/255.f green:250/255.f blue:250/255.f alpha:1.f]];
+				[saveButton setBackgroundColor:[UIColor colorWithRed:255/255.f green:144/255.f blue:0/255.f alpha:1.f]];
 				[sign addSubview:saveButton];
 
 				//Clear button
 				clearButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-				[clearButton setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(90))];
+//				[clearButton setTransform:CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(180))];
 				[clearButton setLineBreakMode:NSLineBreakByClipping];
 				[clearButton addTarget:self action:@selector(onClearButtonPressed)
 				             forControlEvents:UIControlEventTouchUpInside];
-				[clearButton setTitle:@"Reset" forState:UIControlStateNormal];
-
-				clearButton.frame = CGRectMake(sign.bounds.size.width - buttonSize.width, 0, buttonSize.width, buttonSize.height);
-				[clearButton setBackgroundColor:[UIColor colorWithRed:250/255.f green:250/255.f blue:250/255.f alpha:1.f]];
+				[clearButton setTitle:@"重置" forState:UIControlStateNormal];
+                [clearButton setTitleColor:[UIColor colorWithRed:255/255.f green:255/255.f blue:255/255.f alpha:1.f]forState:UIControlStateNormal];
+                
+				clearButton.frame = CGRectMake(sign.bounds.size.width - buttonSize.width *2-15, sign.bounds.size.height - buttonSize.height, buttonSize.width, buttonSize.height);
+				[clearButton setBackgroundColor:[UIColor colorWithRed:250/255.f green:144/255.f blue:0/255.f alpha:1.f]];
 				[sign addSubview:clearButton];
 			}
 		}
@@ -195,7 +197,11 @@
 
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString *documentsDirectory = [paths firstObject];
-	NSString *tempPath = [documentsDirectory stringByAppendingFormat:@"/signature.png"];
+// 	NSString *tempPath = [documentsDirectory stringByAppendingFormat:@"/signature.png"];
+	NSString * timestamp = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
+        timestamp = [timestamp stringByAppendingString:@".png"];
+    NSString *tempPath = [documentsDirectory stringByAppendingFormat:@"/signature"];
+        tempPath = [tempPath stringByAppendingString:timestamp];
 
 	//remove if file already exists
 	if ([[NSFileManager defaultManager] fileExistsAtPath:tempPath]) {
@@ -220,6 +226,7 @@
 
 -(void) onClearButtonPressed {
 	[self erase];
+    [self.manager publishResetImageEvent];
 }
 
 -(void) erase {
