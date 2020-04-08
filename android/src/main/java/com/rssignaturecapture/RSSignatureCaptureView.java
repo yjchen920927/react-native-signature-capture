@@ -114,6 +114,12 @@ public class RSSignatureCaptureView extends View {
 	public void clearSignature() {
 		clear();
 	}
+        /**
+	 * signature isEmpty
+	 */
+	public boolean isEmpty() {
+		return mIsEmpty;
+	}
 
 	private void addPoint(TimedPoint newPoint) {
 		mPoints.add(newPoint);
