@@ -29,6 +29,7 @@ class SignatureCapture extends React.Component {
             this.props.onSaveEvent({
                 pathName: event.nativeEvent.pathName,
                 encoded: event.nativeEvent.encoded,
+                itemName: event.nativeEvent.itemName,
             });
         }
         if(event.nativeEvent.reset){
@@ -37,6 +38,8 @@ class SignatureCapture extends React.Component {
                 return;
             }
             this.props.onResetEvent({
+                itemName: event.nativeEvent.itemName,
+                reset: event.nativeEvent.reset,
             });
         }
         if(event.nativeEvent.dragged){
