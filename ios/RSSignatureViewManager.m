@@ -15,6 +15,7 @@ RCT_EXPORT_VIEW_PROPERTY(square, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(showBorder, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(showNativeButtons, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(showTitleLabel, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(itemName, NSString)
 
 
 -(dispatch_queue_t) methodQueue
@@ -43,19 +44,21 @@ RCT_EXPORT_METHOD(resetImage:(nonnull NSNumber *)reactTag) {
 	});
 }
 
--(void) publishSaveImageEvent:(NSString *) aTempPath withEncoded: (NSString *) aEncoded {
+-(void) publishSaveImageEvent:(NSString *) aTempPath withEncoded: (NSString *) aEncoded withItem:(NSString *) itemName{
 	[self.bridge.eventDispatcher
 	 sendDeviceEventWithName:@"onSaveEvent"
 	 body:@{
 					@"pathName": aTempPath,
-					@"encoded": aEncoded
+					@"encoded": aEncoded,
+                    @"itemName": itemName
 					}];
 }
--(void) publishResetImageEvent{
+-(void) publishResetImageEvent:(NSString *) itemName{
     [self.bridge.eventDispatcher
      sendDeviceEventWithName:@"onResetEvent"
-     body:@{@"reset": @YES
-                    }];
+     body:@{@"reset": @YES,
+            @"itemName": itemName
+     }];
 }
 -(void) publishDraggedEvent {
 	[self.bridge.eventDispatcher
