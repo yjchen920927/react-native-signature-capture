@@ -19,6 +19,7 @@
 	BOOL _showBorder;
 	BOOL _showNativeButtons;
 	BOOL _showTitleLabel;
+	NSString *_itemName;
 }
 
 @synthesize sign;
@@ -220,13 +221,13 @@
 		//UInt32 result = [attrs fileSize];
 
 		NSString *base64Encoded = [imageData base64EncodedStringWithOptions:0];
-		[self.manager publishSaveImageEvent: tempPath withEncoded:base64Encoded];
+		[self.manager publishSaveImageEvent: tempPath withEncoded:base64Encoded withItem:_itemName];
 	}
 }
 
 -(void) onClearButtonPressed {
 	[self erase];
-    [self.manager publishResetImageEvent];
+    [self.manager publishResetImageEvent:_itemName];
 }
 
 -(void) erase {
