@@ -1,6 +1,7 @@
 package com.rssignaturecapture;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -24,12 +25,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
+import android.widget.RelativeLayout;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import java.lang.Boolean;
+import java.util.Date;
 
-public class RSSignatureCaptureMainView extends LinearLayout implements OnClickListener,RSSignatureCaptureView.SignatureCallback {
+public class RSSignatureCaptureMainView extends RelativeLayout implements OnClickListener,RSSignatureCaptureView.SignatureCallback {
   LinearLayout buttonsLayout;
   RSSignatureCaptureView signatureView;
 
@@ -41,6 +43,7 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
   Boolean showNativeButtons = true;
   Boolean showTitleLabel = true;
   int maxSize = 500;
+  String itemName = "signA";
 
   public RSSignatureCaptureMainView(Context context, Activity activity) {
     super(context);
@@ -48,15 +51,19 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
     mOriginalOrientation = activity.getRequestedOrientation();
     mActivity = activity;
 
-    this.setOrientation(LinearLayout.VERTICAL);
+//    this.setOrientation(LinearLayout.VERTICAL);
     this.signatureView = new RSSignatureCaptureView(context,this);
     // add the buttons and signature views
     this.buttonsLayout = this.buttonsLayout();
-    this.addView(this.buttonsLayout);
     this.addView(signatureView);
+    this.addView(this.buttonsLayout);
 
     setLayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT));
+    RelativeLayout.LayoutParams lp=new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+    lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+    lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+    this.buttonsLayout.setLayoutParams(lp);
   }
 
   public RSSignatureCaptureView getSignatureView() {
@@ -66,7 +73,9 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
   public void setSaveFileInExtStorage(Boolean saveFileInExtStorage) {
     this.saveFileInExtStorage = saveFileInExtStorage;
   }
-
+  public void setItemName(String itemName) {
+    this.itemName = itemName;
+  }
   public void setViewMode(String viewMode) {
     this.viewMode = viewMode;
 
@@ -104,16 +113,29 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
     linearLayout.setBackgroundColor(Color.WHITE);
 
     // set texts, tags and OnClickListener
-    saveBtn.setText("Save");
+    saveBtn.setText("确认");
+    saveBtn.setTextSize(16);
     saveBtn.setTag("Save");
+    saveBtn.setBackgroundColor(Color.parseColor("#ff9000"));
+    saveBtn.setTextColor(Color.WHITE);
     saveBtn.setOnClickListener(this);
+    LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
+    lp.rightMargin=((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()));
+    lp.width=((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()));
+    lp.height=((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics()));
 
-    clearBtn.setText("Reset");
+    saveBtn.setLayoutParams(lp);
+
+    clearBtn.setText("重置");
+    clearBtn.setTextSize(16);
     clearBtn.setTag("Reset");
+    clearBtn.setBackgroundColor(Color.parseColor("#ff9000"));
+    clearBtn.setTextColor(Color.WHITE);
     clearBtn.setOnClickListener(this);
+    clearBtn.setLayoutParams(lp);
 
-    linearLayout.addView(saveBtn);
     linearLayout.addView(clearBtn);
+    linearLayout.addView(saveBtn);
 
     // return the whoe layout
     return linearLayout;
@@ -125,12 +147,18 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
 
     // save the signature
     if (tag.equalsIgnoreCase("save")) {
+      if(this.signatureView.isEmpty()) return;
       this.saveImage();
     }
 
     // empty the canvas
     else if (tag.equalsIgnoreCase("Reset")) {
       this.signatureView.clearSignature();
+      WritableMap event = Arguments.createMap();
+      event.putBoolean("reset", true);
+      event.putString("itemName", this.itemName);
+      ReactContext reactContext = (ReactContext) getContext();
+      reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "topChange", event);
     }
   }
 
@@ -150,7 +178,8 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
     }
 
     // set the file name of your choice
-    String fname = "signature.png";
+//    String fname = "signature.png";
+    String fname = "signature_" + new Date().getTime() + ".png";
 
     // in our case, we delete the previous file, you can remove this
     File file = new File(myDir, fname);
@@ -181,6 +210,7 @@ public class RSSignatureCaptureMainView extends LinearLayout implements OnClickL
       WritableMap event = Arguments.createMap();
       event.putString("pathName", file.getAbsolutePath());
       event.putString("encoded", encoded);
+      event.putString("itemName", this.itemName);
       ReactContext reactContext = (ReactContext) getContext();
       reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "topChange", event);
     } catch (Exception e) {
