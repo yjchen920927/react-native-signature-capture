@@ -26,7 +26,7 @@ public class RSSignatureCaptureViewManager extends ViewGroupManager<RSSignatureC
 	public static final String PROPS_MAX_STROKE_WIDTH="maxStrokeWidth";
 	public static final String PROPS_STROKE_COLOR="strokeColor";
 	public static final String PROPS_BACKGROUND_COLOR="backgroundColor";
-
+        public static final String PROPS_ITEM_NAME="itemName";
 	public static final int COMMAND_SAVE_IMAGE = 1;
 	public static final int COMMAND_RESET_IMAGE = 2;
 
@@ -40,7 +40,13 @@ public class RSSignatureCaptureViewManager extends ViewGroupManager<RSSignatureC
 	public String getName() {
 		return "RSSignatureView";
 	}
-
+        @ReactProp(name = PROPS_ITEM_NAME)
+	public void setPropsItemName(RSSignatureCaptureMainView view, @Nullable String itemName) {
+		Log.d("itemName:",  ""+itemName);
+		if(view!=null){
+			view.setItemName(itemName);
+		}
+	}
 	@ReactProp(name = PROPS_SAVE_IMAGE_FILE)
 	public void setSaveImageFileInExtStorage(RSSignatureCaptureMainView view, @Nullable Boolean saveFile) {
 		Log.d("setFileInExtStorage:", "" + saveFile);
