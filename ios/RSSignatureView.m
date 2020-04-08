@@ -181,7 +181,9 @@
 - (void)setShowTitleLabel:(BOOL)showTitleLabel {
 	_showTitleLabel = showTitleLabel;
 }
-
+- (void)setItemName:(NSString *)itemName {
+    _itemName = itemName;
+}
 -(void) onSaveButtonPressed {
 	[self saveImage];
 }
